@@ -73,9 +73,12 @@ def load_network_and_optimizer_v2(net, opt, pretrained_dir, gpu, scaler=None):
     return net.cuda(gpu), opt, pretrained_dict_remove
 
 
-def load_network(net, pretrained_dir, gpu):
-    pretrained = torch.load(pretrained_dir,
-                            map_location=torch.device("cuda:" + str(gpu)))
+def load_network(net, pretrained_dir, gpu=0, device='cuda'):
+    if device == 'cuda':
+        pretrained = torch.load(pretrained_dir, map_location=torch.device("cuda:" + str(gpu)))
+    else:
+        print('loading model as device', device)
+        pretrained = torch.load(pretrained_dir, map_location=torch.device(device))
     if 'state_dict' in pretrained.keys():
         pretrained_dict = pretrained['state_dict']
     elif 'model' in pretrained.keys():
@@ -96,7 +99,10 @@ def load_network(net, pretrained_dir, gpu):
     model_dict.update(pretrained_dict_update)
     net.load_state_dict(model_dict)
     del (pretrained)
-    return net.cuda(gpu), pretrained_dict_remove
+    if device == 'cuda':
+        return net.cuda(gpu), pretrained_dict_remove
+    else:
+        return net.to(device), pretrained_dict_remove
 
 
 def save_network(net,
