@@ -6,7 +6,7 @@ setup(
     package_dir={"": "src"},
     packages=find_packages("src"),
     install_requires=[
-        "torch>=2.1",
+        "torch>=2.0",
         "matplotlib",
         'opencv-python',
         'pillow',
